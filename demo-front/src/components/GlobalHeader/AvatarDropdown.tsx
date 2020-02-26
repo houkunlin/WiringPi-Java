@@ -84,4 +84,5 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 
 export default connect(({ user }: ConnectState) => ({
   currentUser: user.currentUser,
+  menu: true,
 }))(AvatarDropdown);
