@@ -11,126 +11,149 @@ import ControlBox from '@/pages/Airplane/FlightControl/ControlBox';
 import PowerBox from './PowerBox';
 import { FlightControlProps, FlightControlState } from './data';
 import styles from './index.less';
+import { CompatClient } from '@stomp/stompjs/esm5/compatibility/compat-client';
 
 class FlightControl extends Component<FlightControlProps, FlightControlState> {
   constructor(props: FlightControlProps) {
     super(props);
     this.state = {
-      status: {
-        airplane: {
-          direction: {
-            vertical: 0,
-            horizontal: 0,
-            forwardBackward: 0,
-            rotate: 0,
-          },
-          gps: {
-            lng: 0,
-            lat: 0,
-            height: 0,
-            speed: 0,
-          },
-          posture: {
-            x: 0,
-            y: 0,
-            z: 0,
-          },
-          motors: [
-            {
-              gpio: {
-                pin: 0,
-                physPin: null,
-                wiringPiPin: null,
-                bcmPin: null,
-              },
-              dutyRatio: -0.5,
-              posture: 0.0,
-              run: false,
-              debugHighLevelTime: -1,
-              runtimeCycle: 0,
-              title: '1号电机',
-            },
-            {
-              gpio: {
-                pin: 0,
-                physPin: null,
-                wiringPiPin: null,
-                bcmPin: null,
-              },
-              dutyRatio: -0.5,
-              posture: 0.0,
-              run: false,
-              debugHighLevelTime: -1,
-              runtimeCycle: 0,
-              title: '2号电机',
-            },
-            {
-              gpio: {
-                pin: 0,
-                physPin: null,
-                wiringPiPin: null,
-                bcmPin: null,
-              },
-              dutyRatio: -0.5,
-              posture: 0.0,
-              run: false,
-              debugHighLevelTime: -1,
-              runtimeCycle: 0,
-              title: '3号电机',
-            },
-            {
-              gpio: {
-                pin: 0,
-                physPin: null,
-                wiringPiPin: null,
-                bcmPin: null,
-              },
-              dutyRatio: -0.5,
-              posture: 0.0,
-              run: false,
-              debugHighLevelTime: -1,
-              runtimeCycle: 0,
-              title: '4号电机',
-            },
-          ],
+      airplane: {
+        direction: {
+          vertical: 0,
+          horizontal: 0,
+          forwardBackward: 0,
+          rotate: 0,
         },
-        power: {
-          gpio: {
-            pin: 0,
-            physPin: null,
-            wiringPiPin: null,
-            bcmPin: null,
-          },
-          open: false,
-          startTime: null,
-          endTime: null,
+        gps: {
+          lng: 0,
+          lat: 0,
+          height: 0,
+          speed: 0,
         },
+        posture: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+        motors: [
+          {
+            gpio: {
+              pin: 0,
+              physPin: null,
+              wiringPiPin: null,
+              bcmPin: null,
+            },
+            dutyRatio: -0.5,
+            posture: 0.0,
+            run: false,
+            debugHighLevelTime: -1,
+            runtimeCycle: 0,
+            title: '1号电机',
+          },
+          {
+            gpio: {
+              pin: 0,
+              physPin: null,
+              wiringPiPin: null,
+              bcmPin: null,
+            },
+            dutyRatio: -0.5,
+            posture: 0.0,
+            run: false,
+            debugHighLevelTime: -1,
+            runtimeCycle: 0,
+            title: '2号电机',
+          },
+          {
+            gpio: {
+              pin: 0,
+              physPin: null,
+              wiringPiPin: null,
+              bcmPin: null,
+            },
+            dutyRatio: -0.5,
+            posture: 0.0,
+            run: false,
+            debugHighLevelTime: -1,
+            runtimeCycle: 0,
+            title: '3号电机',
+          },
+          {
+            gpio: {
+              pin: 0,
+              physPin: null,
+              wiringPiPin: null,
+              bcmPin: null,
+            },
+            dutyRatio: -0.5,
+            posture: 0.0,
+            run: false,
+            debugHighLevelTime: -1,
+            runtimeCycle: 0,
+            title: '4号电机',
+          },
+        ],
       },
+      power: {
+        gpio: {
+          pin: 0,
+          physPin: null,
+          wiringPiPin: null,
+          bcmPin: null,
+        },
+        open: false,
+        startTime: null,
+        endTime: null,
+      },
+      client: null,
     };
   }
+
+  directionChange = (values: any) => {
+    const { client } = this.state;
+    if (client != null) {
+      client.send('/airplane/direction', {}, JSON.stringify(values));
+    }
+  };
+
+  powerChange = (open: boolean) => {
+    console.log('电源状态', open);
+    const { client } = this.state;
+    if (client != null) {
+      client.send('/airplane/power', {}, JSON.stringify({ value: open }));
+    }
+  };
+
+  onConnect = (client: CompatClient) => {
+    this.setState({ client });
+    // 订阅飞机状态信息
+    client.subscribe('/topic/airplane/status', response => {
+      const json = JSON.parse(response.body);
+      const { power, airplane } = json;
+      this.setState({ power, airplane });
+    });
+  };
+
+  onDisconnect = () => {
+    this.setState({ client: null });
+  };
 
   render() {
     // console.log(this.props);
     // console.log(this.state);
     // console.log(document.location);
     const {
-      status: {
-        power,
-        airplane: { direction, gps, posture, motors },
-      },
+      power,
+      airplane: { direction, gps, posture, motors },
     } = this.state;
 
     return (
-      <PageHeaderWrapper content="这是一个新页面，从这里进行开发！" className={styles.main}>
+      <PageHeaderWrapper content="树莓派飞机控制台" className={styles.main}>
         <Card style={{ marginBottom: 20 }}>
-          <ConnectBox
-            onConnect={client => {
-              console.log(client);
-            }}
-          />
+          <ConnectBox onConnect={this.onConnect} onDisconnect={this.onDisconnect} />
         </Card>
         <Card style={{ marginBottom: 20 }}>
-          <PowerBox data={power} />
+          <PowerBox data={power} onChange={this.powerChange} />
         </Card>
         <Row gutter={20} style={{ marginBottom: 20 }}>
           <Col xs={12}>
@@ -145,7 +168,7 @@ class FlightControl extends Component<FlightControlProps, FlightControlState> {
           </Col>
         </Row>
         <MotorBox motors={motors} />
-        <ControlBox direction={direction} />
+        <ControlBox direction={direction} onChange={this.directionChange} />
       </PageHeaderWrapper>
     );
   }

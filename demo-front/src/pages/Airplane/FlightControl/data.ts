@@ -1,5 +1,6 @@
 import { ConnectProps } from '@/models/connect';
 import { FormComponentProps } from '@ant-design/compatible/es/form';
+import { CompatClient } from '@stomp/stompjs/esm5/compatibility/compat-client';
 
 export interface Gpio {
   pin: number;
@@ -48,13 +49,12 @@ export interface Direction {
 export interface FlightControlProps extends ConnectProps, FormComponentProps {}
 
 export interface FlightControlState {
-  status: {
-    airplane: {
-      direction: Direction;
-      gps: Gps;
-      posture: Posture;
-      motors: Motor[];
-    };
-    power: Power;
+  airplane: {
+    direction: Direction;
+    gps: Gps;
+    posture: Posture;
+    motors: Motor[];
   };
+  power: Power;
+  client: CompatClient | null;
 }

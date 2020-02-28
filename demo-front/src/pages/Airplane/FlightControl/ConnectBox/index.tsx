@@ -6,12 +6,9 @@ import { FormInstance } from 'antd/lib/form';
 import SockJS from 'sockjs-client';
 // import Stomp from 'stomp-client';
 import { Stomp } from '@stomp/stompjs';
-import { CompatClient } from '@stomp/stompjs/esm5/compatibility/compat-client';
 
 class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
   formRef: RefObject<FormInstance> = React.createRef();
-
-  client: CompatClient | null = null;
 
   constructor(props: ConnectBoxProps) {
     super(props);
@@ -19,6 +16,7 @@ class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
       prefix: `${document.location.protocol}//`,
       value: `${document.location.host}/raspberry-pi/airplane`,
       loading: false,
+      client: null,
     };
   }
 
@@ -31,14 +29,9 @@ class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
     client.connect(
       {},
       (frame: any) => {
-        console.log(`Connected:${frame}`);
-        client.subscribe('/topic/callback', response => {
-          const json = JSON.parse(response.body);
-          console.log(json);
-        });
+        console.log(`Connected: ${frame}`);
+        this.setState({ loading: false, client });
         this.props.onConnect(client);
-        this.client = client;
-        this.setState({ loading: false });
       },
       (error: any) => {
         console.log(`错误${error}`);
@@ -48,9 +41,11 @@ class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
   };
 
   disconnect = () => {
-    if (this.client != null) {
-      this.client.disconnect(() => {
-        this.client = null;
+    const { client } = this.state;
+    if (client != null) {
+      client.disconnect(() => {
+        this.setState({ client: null });
+        this.props.onDisconnect();
       });
     }
   };
@@ -60,7 +55,7 @@ class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
   };
 
   render() {
-    const { prefix, value, loading } = this.state;
+    const { prefix, value, loading, client } = this.state;
     return (
       <Form ref={this.formRef} onValuesChange={this.onFormChange}>
         <Row gutter={8}>
@@ -69,14 +64,14 @@ class ConnectBox extends Component<ConnectBoxProps, ConnectBoxState> {
               <Input addonBefore={prefix} defaultValue={value} />
             </Form.Item>
           </Col>
-          {this.client == null && (
+          {client == null && (
             <Col xs={2}>
               <Button type="primary" onClick={this.connect} loading={loading}>
                 连接服务器
               </Button>
             </Col>
           )}
-          {this.client != null && (
+          {client != null && (
             <Col xs={2}>
               <Button type="danger" onClick={this.disconnect}>
                 断开连接

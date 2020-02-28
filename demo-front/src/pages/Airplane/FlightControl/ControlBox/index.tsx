@@ -133,9 +133,15 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
     });
   }
 
+  onFormChange = (values: any, allValues: any) => {
+    console.log(values, allValues);
+    this.props.onChange(allValues);
+  };
+
   setFieldsValue = (values: any) => {
     if (this.formRef.current) {
-      this.formRef.current.setFieldsValue({ ...values });
+      this.formRef.current.setFieldsValue(values);
+      this.onFormChange(values, this.formRef.current.getFieldsValue());
     }
   };
 
@@ -147,6 +153,31 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
     const { direction } = this.props;
     const { nippleData } = this.state;
     const formatNumber = (value: number) => numeral(value).format('0.0%');
+    const genObj = (name: string, max: number, min: number, step: number) => ({
+      name,
+      max,
+      min,
+      step,
+      maxFun: () => {
+        const obj = {};
+        obj[name] = max;
+        setFieldsValue(obj);
+      },
+      midFun: () => {
+        const obj = {};
+        obj[name] = (max + min) / 2.0;
+        setFieldsValue(obj);
+      },
+      minFun: () => {
+        const obj = {};
+        obj[name] = min;
+        setFieldsValue(obj);
+      },
+    });
+    const vertical = genObj('vertical', 1, 0, 0.001);
+    const horizontal = genObj('horizontal', 0.5, -0.5, 0.001);
+    const forwardBackward = genObj('forwardBackward', 0.5, -0.5, 0.001);
+    const rotate = genObj('rotate', 0.5, -0.5, 0.001);
     return (
       <Form
         ref={this.formRef}
@@ -154,23 +185,24 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
         // form={form}
         style={{ width: '100%' }}
         initialValues={{
-          'direction.rotate': direction.rotate,
-          'direction.horizontal': direction.horizontal,
-          'direction.forwardBackward': direction.forwardBackward,
-          'direction.vertical': direction.vertical,
+          rotate: direction.rotate,
+          horizontal: direction.horizontal,
+          forwardBackward: direction.forwardBackward,
+          vertical: direction.vertical,
         }}
+        onValuesChange={this.onFormChange}
       >
         <Row gutter={20} style={{ marginBottom: 20 }}>
           <Col xs={6}>
             <Card title="油门">
               <Row>
                 <Col xs={12}>
-                  <Form.Item name="direction.vertical">
+                  <Form.Item name={vertical.name}>
                     <Slider
                       vertical
-                      max={1}
-                      min={0}
-                      step={0.001}
+                      max={vertical.max}
+                      min={vertical.min}
+                      step={vertical.step}
                       tooltipVisible
                       style={{ height: 200 }}
                       tooltipPlacement="top"
@@ -185,9 +217,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                         type="primary"
                         block
                         style={{ marginBottom: 10 }}
-                        onClick={() => {
-                          setFieldsValue({ 'direction.vertical': 1 });
-                        }}
+                        onClick={vertical.maxFun}
                       >
                         最大
                       </Button>
@@ -197,9 +227,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                         type="dashed"
                         block
                         style={{ marginBottom: 10 }}
-                        onClick={() => {
-                          setFieldsValue({ 'direction.vertical': 0.5 });
-                        }}
+                        onClick={vertical.midFun}
                       >
                         中间
                       </Button>
@@ -209,9 +237,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                         type="primary"
                         block
                         style={{ marginBottom: 10 }}
-                        onClick={() => {
-                          setFieldsValue({ 'direction.vertical': 0 });
-                        }}
+                        onClick={vertical.minFun}
                       >
                         最小
                       </Button>
@@ -225,12 +251,12 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
             <Card title="前进/后退">
               <Row>
                 <Col xs={12}>
-                  <Form.Item name="direction.forwardBackward">
+                  <Form.Item name={forwardBackward.name}>
                     <Slider
                       vertical
-                      max={0.5}
-                      min={-0.5}
-                      step={0.001}
+                      max={forwardBackward.max}
+                      min={forwardBackward.min}
+                      step={forwardBackward.step}
                       tooltipVisible
                       style={{ height: 200 }}
                       tooltipPlacement="top"
@@ -243,9 +269,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="primary"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.forwardBackward': 0.5 });
-                    }}
+                    onClick={forwardBackward.maxFun}
                   >
                     最大
                   </Button>
@@ -253,9 +277,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="dashed"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.forwardBackward': 0 });
-                    }}
+                    onClick={forwardBackward.midFun}
                   >
                     中间
                   </Button>
@@ -263,9 +285,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="primary"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.forwardBackward': -0.5 });
-                    }}
+                    onClick={forwardBackward.minFun}
                   >
                     最小
                   </Button>
@@ -277,11 +297,11 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
             <Card title="向左/向右">
               <Row>
                 <Col xs={24}>
-                  <Form.Item name="direction.horizontal">
+                  <Form.Item name={horizontal.name}>
                     <Slider
-                      max={0.5}
-                      min={-0.5}
-                      step={0.001}
+                      max={horizontal.max}
+                      min={horizontal.min}
+                      step={horizontal.step}
                       tooltipVisible
                       tooltipPlacement="top"
                       tipFormatter={formatNumber}
@@ -293,9 +313,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="primary"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.horizontal': 0.5 });
-                    }}
+                    onClick={horizontal.maxFun}
                   >
                     最大
                   </Button>
@@ -303,9 +321,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="dashed"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.horizontal': 0 });
-                    }}
+                    onClick={horizontal.midFun}
                   >
                     中间
                   </Button>
@@ -313,9 +329,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                     type="primary"
                     block
                     style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.horizontal': -0.5 });
-                    }}
+                    onClick={horizontal.minFun}
                   >
                     最小
                   </Button>
@@ -327,11 +341,11 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
             <Card title="原地旋转">
               <Row>
                 <Col xs={24}>
-                  <Form.Item name="direction.rotate">
+                  <Form.Item name={rotate.name}>
                     <Slider
-                      max={0.5}
-                      min={-0.5}
-                      step={0.001}
+                      max={rotate.max}
+                      min={rotate.min}
+                      step={rotate.step}
                       tooltipVisible
                       tooltipPlacement="top"
                       tipFormatter={formatNumber}
@@ -339,34 +353,13 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
                   </Form.Item>
                 </Col>
                 <Col xs={24}>
-                  <Button
-                    type="primary"
-                    block
-                    style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.rotate': 0.5 });
-                    }}
-                  >
+                  <Button type="primary" block style={{ marginBottom: 10 }} onClick={rotate.maxFun}>
                     最大
                   </Button>
-                  <Button
-                    type="dashed"
-                    block
-                    style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.rotate': 0 });
-                    }}
-                  >
+                  <Button type="dashed" block style={{ marginBottom: 10 }} onClick={rotate.midFun}>
                     中间
                   </Button>
-                  <Button
-                    type="primary"
-                    block
-                    style={{ marginBottom: 10 }}
-                    onClick={() => {
-                      setFieldsValue({ 'direction.rotate': -0.5 });
-                    }}
-                  >
+                  <Button type="primary" block style={{ marginBottom: 10 }} onClick={rotate.minFun}>
                     最小
                   </Button>
                 </Col>

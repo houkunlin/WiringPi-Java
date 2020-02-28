@@ -11,24 +11,32 @@ class Power extends Component<PowerBoxProps, PowerBoxState> {
     this.state = {};
   }
 
+  onFormChange = (values: any, allValues: any) => {
+    console.log(values, allValues);
+    if (values.open !== undefined) {
+      this.props.onChange(values.open);
+    }
+  };
+
   render() {
     const { data } = this.props;
     return (
       <Form
         layout="inline"
         initialValues={{
-          'power.open': data.open,
-          'power.startTime': data.startTime == null ? null : moment(data.startTime),
-          'power.endTime': data.endTime == null ? null : moment(data.endTime),
+          open: data.open,
+          startTime: data.startTime == null ? null : moment(data.startTime),
+          endTime: data.endTime == null ? null : moment(data.endTime),
         }}
+        onValuesChange={this.onFormChange}
       >
-        <Form.Item label="电源状态" name="power.open">
-          <Switch checkedChildren="已开启" unCheckedChildren="已关闭" />
+        <Form.Item label="电源状态" name="open">
+          <Switch defaultChecked={data.open} checkedChildren="已开启" unCheckedChildren="已关闭" />
         </Form.Item>
-        <Form.Item label="开启时间" name="power.startTime">
+        <Form.Item label="开启时间" name="startTime">
           <DatePicker format="YYYY-MM-DD HH:mm:ss" disabled placeholder="电源未开始运行" />
         </Form.Item>
-        <Form.Item label="关闭时间" name="power.endTime">
+        <Form.Item label="关闭时间" name="endTime">
           <DatePicker format="YYYY-MM-DD HH:mm:ss" disabled placeholder="电源未结束运行" />
         </Form.Item>
       </Form>
