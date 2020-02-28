@@ -123,7 +123,11 @@ class FlightControl extends Component<FlightControlProps, FlightControlState> {
     return (
       <PageHeaderWrapper content="这是一个新页面，从这里进行开发！" className={styles.main}>
         <Card style={{ marginBottom: 20 }}>
-          <ConnectBox />
+          <ConnectBox
+            onConnect={client => {
+              console.log(client);
+            }}
+          />
         </Card>
         <Card style={{ marginBottom: 20 }}>
           <PowerBox data={power} />

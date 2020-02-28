@@ -1,6 +1,12 @@
 import { ConnectProps } from '@/models/connect';
-import { FormComponentProps } from '@ant-design/compatible/es/form';
+import { CompatClient } from '@stomp/stompjs/esm5/compatibility/compat-client';
 
-export interface ConnectBoxProps extends ConnectProps, FormComponentProps {}
+export interface ConnectBoxProps extends ConnectProps {
+  onConnect: (client: CompatClient) => any;
+}
 
-export interface ConnectBoxState {}
+export interface ConnectBoxState {
+  prefix: string;
+  value: string;
+  loading: boolean;
+}
