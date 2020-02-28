@@ -5,6 +5,9 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,6 +29,12 @@ public class Ggyro {
     private double zScaled;
     private double xRotation;
     private double yRotation;
+
+    private static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#0.000");
+
+    static {
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+    }
 
     public Ggyro() {
         this.piI2C = new WiringPiI2C(0x68);
@@ -81,12 +90,12 @@ public class Ggyro {
         map.put("y", y);
         map.put("z", z);
 
-        map.put("xScaled", xScaled);
-        map.put("yScaled", yScaled);
-        map.put("zScaled", zScaled);
+        map.put("xScaled", DECIMAL_FORMAT.format(xScaled));
+        map.put("yScaled", DECIMAL_FORMAT.format(yScaled));
+        map.put("zScaled", DECIMAL_FORMAT.format(zScaled));
 
-        map.put("xRotation", xRotation);
-        map.put("yRotation", yRotation);
+        map.put("xRotation", DECIMAL_FORMAT.format(xRotation));
+        map.put("yRotation", DECIMAL_FORMAT.format(yRotation));
 
         return map;
     }

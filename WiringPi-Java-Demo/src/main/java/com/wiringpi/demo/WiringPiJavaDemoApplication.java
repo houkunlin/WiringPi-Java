@@ -2,6 +2,7 @@ package com.wiringpi.demo;
 
 import com.wiringpi.demo.listener.ShutdownEventListener;
 import com.wiringpi.demo.listener.StartupEventListener;
+import com.wiringpi.modules.airplane.Airplane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAsync
 @EnableCaching
-@SpringBootApplication(scanBasePackageClasses = {WiringPiJavaDemoApplication.class})
+@SpringBootApplication(scanBasePackageClasses = {WiringPiJavaDemoApplication.class, Airplane.class})
 @ConfigurationPropertiesScan
 public class WiringPiJavaDemoApplication {
     private static final Logger logger = LoggerFactory.getLogger(WiringPiJavaDemoApplication.class);
