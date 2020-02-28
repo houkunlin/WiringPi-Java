@@ -131,20 +131,33 @@ export default {
             },
             {
               path: '/account',
-              name: '账户中心',
+              name: 'account',
               icon: 'crown',
               routes: [
                 {
-                  name: '个人中心',
+                  name: 'center',
                   icon: 'smile',
                   path: '/account/center',
                   component: './user/AccountCenter',
                 },
                 {
-                  name: '个人设置',
+                  name: 'settings',
                   icon: 'smile',
                   path: '/account/settings',
                   component: './user/AccountSettings',
+                },
+              ],
+            },
+            {
+              path: '/airplane',
+              name: 'airplane',
+              icon: 'crown',
+              routes: [
+                {
+                  name: 'flight-control',
+                  icon: 'smile',
+                  path: '/airplane/flight-control',
+                  component: './Airplane/FlightControl',
                 },
               ],
             },

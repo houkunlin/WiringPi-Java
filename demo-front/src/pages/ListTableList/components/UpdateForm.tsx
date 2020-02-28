@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Button, DatePicker, Input, Modal, Radio, Select, Steps } from 'antd';
+import '@ant-design/compatible/assets/index.css';
+import { Button, DatePicker, Form, Input, Modal, Radio, Select, Steps } from 'antd';
 
 import { TableListItem } from '../data.d';
 
@@ -17,6 +18,7 @@ export interface UpdateFormProps {
   updateModalVisible: boolean;
   values: Partial<TableListItem>;
 }
+
 const FormItem = Form.Item;
 const { Step } = Steps;
 const { TextArea } = Input;
@@ -75,7 +77,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
   const renderContent = () => {
     if (currentStep === 1) {
       return (
-        <>
+        <Form>
           <FormItem name="target" label="监控对象">
             <Select style={{ width: '100%' }}>
               <Option value="0">表一</Option>
@@ -94,7 +96,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
               <Radio value="1">弱</Radio>
             </RadioGroup>
           </FormItem>
-        </>
+        </Form>
       );
     }
     if (currentStep === 2) {
