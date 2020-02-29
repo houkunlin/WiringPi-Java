@@ -34,4 +34,11 @@ public class DirectionDTO {
         this.forwardBackward = dto.forwardBackward;
         this.rotate = dto.rotate;
     }
+
+    public void reset() {
+        this.vertical = -0.5;
+        this.horizontal = 0;
+        this.forwardBackward = 0;
+        this.rotate = 0;
+    }
 }

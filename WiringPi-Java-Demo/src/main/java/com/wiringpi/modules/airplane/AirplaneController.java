@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wiringpi.modules.airplane.dto.DirectionDTO;
 import com.wiringpi.modules.airplane.dto.Motor;
+import com.wiringpi.modules.airplane.dto.MotorDebugDTO;
 import com.wiringpi.modules.airplane.dto.Power;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +25,7 @@ import java.util.Map;
  * @date 2020/2/22 0022 23:51
  */
 @RestController
-@RequestMapping("airplane")
+@RequestMapping
 public class AirplaneController {
     private static final Logger logger = LoggerFactory.getLogger(AirplaneController.class);
 
@@ -73,44 +75,46 @@ public class AirplaneController {
     /**
      * 设置电机的占空比
      *
-     * @param map
+     * @param dto
      * @return
      * @throws InterruptedException
      */
     @MessageMapping("airplane/motor/dutyCycle")
-    public void motor(Map<String, Object> map) throws InterruptedException {
-        logger.info("设置电机占空比：{}", map);
-        int index = ((Number) map.get("index")).intValue();
-        Number value = (Number) map.get("value");
+    @GetMapping("airplane/motor/dutyCycle")
+    public void motor(MotorDebugDTO dto) throws InterruptedException {
+        logger.info("设置电机占空比：{}", dto);
+        int index = dto.getIndex();
+        double value = dto.getValue();
         Motor[] motors = airplane.getMotors();
         if (index > motors.length || index < 1) {
             for (Motor motor : motors) {
-                motor.setDutyRatio(value.doubleValue());
+                motor.setDutyRatio(value);
             }
         } else {
-            motors[index - 1].setDutyRatio(value.doubleValue());
+            motors[index - 1].setDutyRatio(value);
         }
     }
 
     /**
      * 设置电机的高电平时间值
      *
-     * @param map
+     * @param dto
      * @return
      * @throws InterruptedException
      */
     @MessageMapping("airplane/motor/debug")
-    public void debug(Map<String, Object> map) throws InterruptedException {
-        logger.info("调试电机高电平时间参数：{}", map);
-        int index = ((Number) map.get("index")).intValue();
-        Number value = (Number) map.get("value");
+    @GetMapping("airplane/motor/debug")
+    public void debug(MotorDebugDTO dto) throws InterruptedException {
+        logger.info("调试电机高电平时间参数：{}", dto);
+        int index = dto.getIndex();
+        double value = dto.getValue();
         Motor[] motors = airplane.getMotors();
         if (index > motors.length || index < 1) {
             for (Motor motor : motors) {
-                motor.setDebugHighLevelTime(value.doubleValue());
+                motor.setDebugHighLevelTime(value);
             }
         } else {
-            motors[index - 1].setDebugHighLevelTime(value.doubleValue());
+            motors[index - 1].setDebugHighLevelTime(value);
         }
     }
 
@@ -118,6 +122,7 @@ public class AirplaneController {
      * 紧急制动。在紧急情况下一键关闭飞机所有电机，使电机不再运行，但是不会关闭电源，为后续启动做准备。
      */
     @MessageMapping("airplane/emergencyBraking")
+    @GetMapping("airplane/emergencyBraking")
     public void emergencyBraking() {
         DirectionDTO direction = airplane.getDirection();
         direction.setVertical(0.0);
