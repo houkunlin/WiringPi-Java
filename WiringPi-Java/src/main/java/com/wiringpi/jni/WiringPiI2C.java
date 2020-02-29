@@ -60,14 +60,14 @@ public class WiringPiI2C {
     }
 
     public int readWord2c(int addr) {
-        int val;
-        val = wiringPiI2CReadReg8(addr);
-        val = val << 8;
-        val += wiringPiI2CReadReg8(addr + 1);
-        if (val >= 0x8000) {
-            val = -(65536 - val);
+        int value;
+        int value1 = wiringPiI2CReadReg8(addr);
+        int value2 = wiringPiI2CReadReg8(addr + 1);
+        value = (value1 << 8) + value2;
+        if (value >= 0x8000) {
+            value = -(65536 - value);
         }
 
-        return val;
+        return value;
     }
 }
