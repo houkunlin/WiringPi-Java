@@ -377,6 +377,7 @@ class ControlBox extends Component<ControlBoxProps, ControlBoxState> {
         </Row>
         <Row gutter={8}>
           <Col span={8}>
+            <p>{JSON.stringify(direction)}</p>
             <p>
               <Tag>nippleData?.position.x</Tag>: {nippleData?.position.x}
             </p>
