@@ -1,6 +1,6 @@
 name: Java CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -15,7 +15,3 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn package -DskipTest -Dmaven.test.skip=true --file pom.xml
-    - name: Install Package
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn deploy -DskipTest -Dmaven.test.skip=true
