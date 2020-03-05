@@ -1,3 +1,5 @@
+![Java CI](https://github.com/houkunlin/WiringPi-Java/workflows/Java%20CI/badge.svg) [![](https://jitpack.io/v/houkunlin/WiringPi-Java.svg)](https://jitpack.io/#houkunlin/WiringPi-Java)  
+
 # WiringPi-Java
 
 WiringPi的Java版本，通过Java-JNI调用WiringPi库。
@@ -55,7 +57,42 @@ WiringPi.pinMode(gpio.getPin(), com.wiringpi.jni.modes.PinModes.OUTPUT);
 
 
 
-# How to use the package?
+# 从 jitpack 仓库中引用包
+
+在项目 `pom.xml` 文件中添加代码：
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+在项目 `pom.xml` 文件中添加依赖代码：
+
+```xml
+<!-- Master 版本 -->
+<dependency>
+  <groupId>com.github.houkunlin</groupId>
+  <artifactId>WiringPi-Java</artifactId>
+  <version>master</version>
+</dependency>
+
+<!-- 或者快照版本 -->
+<dependency>
+  <groupId>com.github.houkunlin</groupId>
+  <artifactId>WiringPi-Java</artifactId>
+  <version>master-SNAPSHOT</version>
+</dependency>
+```
+
+
+
+
+
+# [GitHub Packages] How to use the package?
 
 [The Package list](https://github.com/houkunlin/WiringPi-Java/packages)
 
@@ -100,7 +137,7 @@ And in project `pom.xml` file add code:
 
 
 
-# 如何使用这个Maven包？
+# [GitHub Packages] 如何使用这个Maven包？
 
 修改 `~/.m2/settings.xml` 文件添加 `server` 设置。 [创建 Github Token](https://github.com/settings/tokens/new) 选中 `read:packages` 范围.
 
