@@ -1,11 +1,14 @@
 package com.wiringpi.jni;
 
+import lombok.Getter;
+
 /**
  * #include  <wiringPiI2C.h>
  *
  * @author HouKunLin
  * @date 2020/2/22 0022 18:09
  */
+@Getter
 public class WiringPiI2C {
     private static native int wiringPiI2CRead(int fd);
 
@@ -57,17 +60,5 @@ public class WiringPiI2C {
 
     public int wiringPiI2CSetupInterface(String device) {
         return wiringPiI2CSetupInterface(device, devId);
-    }
-
-    public int readWord2c(int addr) {
-        int value;
-        int value1 = wiringPiI2CReadReg8(addr);
-        int value2 = wiringPiI2CReadReg8(addr + 1);
-        value = (value1 << 8) + value2;
-        if (value >= 0x8000) {
-            value = -(65536 - value);
-        }
-
-        return value;
     }
 }
