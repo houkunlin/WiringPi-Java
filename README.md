@@ -92,7 +92,11 @@ WiringPi.pinMode(gpio.getPin(), com.wiringpi.jni.modes.PinModes.OUTPUT);
 
 
 
-# [GitHub Packages] How to use the package?
+# ~~[GitHub Packages] How to use the package?~~
+
+> @Deprecated
+>
+> It is not recommended to use this method to introduce dependencies.
 
 [The Package list](https://github.com/houkunlin/WiringPi-Java/packages)
 
@@ -137,7 +141,11 @@ And in project `pom.xml` file add code:
 
 
 
-# [GitHub Packages] 如何使用这个Maven包？
+# ~~[GitHub Packages] 如何使用这个Maven包？~~
+
+> 被废弃。
+>
+> 不建议使用该种方式引入依赖。
 
 修改 `~/.m2/settings.xml` 文件添加 `server` 设置。 [创建 Github Token](https://github.com/settings/tokens/new) 选中 `read:packages` 范围.
 
